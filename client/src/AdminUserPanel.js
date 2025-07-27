@@ -6,7 +6,7 @@ const AdminUserPanel = () => {
   const [reload, setReload] = useState(false);
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/auth/admin/users `)
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/auth/admin/users`)
       .then(res => setUsers(res.data))
       .catch(err => console.error(err));
   }, [reload]);
