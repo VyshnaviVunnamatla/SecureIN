@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { sendOTP } from "../utils/sendOTP.js";
+import fetch from "node-fetch";
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.post("/register", async (req, res) => {
     await user.save();
     res.status(201).json({ message: "User Registered" });
   } catch (err) {
-    res.status(400).json({ error: "User exists or error" });
+    res.status(400).json({ error: "User already exists or error" });
   }
 });
 
@@ -25,61 +26,87 @@ router.post("/login", async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) return res.status(401).json({ error: "Invalid password" });
+    if (!isValid) return res.status(401).json({ error: "Invalid credentials" });
 
+    // Risk scoring logic
+    let risk = 0;
     let suspicious = false;
+    const geo = await fetch(`https://ipapi.co/${ip}/json`).then(res => res.json());
 
     if (!user.deviceHistory.includes(deviceId)) {
       user.deviceHistory.push(deviceId);
+      risk += 5;
       suspicious = true;
     }
 
     if (!user.ipHistory.includes(ip)) {
       user.ipHistory.push(ip);
+      risk += 3;
       suspicious = true;
     }
 
+    const currentHour = new Date().getHours();
+    if (currentHour < 6 || currentHour > 22) {
+      risk += 2;
+      suspicious = true;
+    }
+
+    // Add login log
+    user.loginLogs.push({
+      timestamp: new Date(),
+      ip,
+      deviceId,
+      city: geo.city,
+      country: geo.country_name,
+      riskScore: risk,
+      flagged: risk >= 5,
+    });
+
     user.suspiciousFlag = suspicious;
-    await user.save();
+
+    if (suspicious) {
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiry = Date.now() + 5 * 60 * 1000;
+      user.otp = otp;
+      user.otpExpiry = expiry;
+      await user.save();
+      await sendOTP(email, otp);
+      return res.json({ message: "OTP sent", suspicious: true });
+    }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    await user.save();
 
-    res.json({ token, suspicious });
+    res.json({ token, suspicious: false });
   } catch (err) {
-    res.status(500).json({ error: "Server Error" });
+    res.status(500).json({ error: "Login failed" });
   }
 });
 
-
-// Generate OTP
-router.post("/generate-otp", async (req, res) => {
-  const { email } = req.body;
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiry = Date.now() + 5 * 60 * 1000; // 5 minutes
-
-  await User.findOneAndUpdate({ email }, { otp, otpExpiry: expiry });
-  await sendOTP(email, otp);
-
-  res.json({ message: "OTP sent" });
-});
-
-// Verify OTP
 router.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
-  const user = await User.findOne({ email });
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
-  if (!user) return res.status(404).json({ error: "User not found" });
-  if (user.otp !== otp || Date.now() > user.otpExpiry)
-    return res.status(400).json({ error: "Invalid or expired OTP" });
+    if (user.otp !== otp || Date.now() > user.otpExpiry)
+      return res.status(400).json({ error: "Invalid or expired OTP" });
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    user.otp = null;
+    user.otpExpiry = null;
+    user.suspiciousFlag = false;
+    await user.save();
 
-  user.otp = null;
-  user.otpExpiry = null;
-  user.suspiciousFlag = false;
-  await user.save();
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    res.json({ token });
+  } catch (err) {
+    res.status(500).json({ error: "OTP verification failed" });
+  }
+});
 
-  res.json({ token });
+router.get("/admin/logs", async (req, res) => {
+  const users = await User.find({}, "email loginLogs").lean();
+  res.json(users);
 });
 
 export default router;
