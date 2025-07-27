@@ -6,20 +6,20 @@ const AdminUserPanel = () => {
   const [reload, setReload] = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/auth/admin/users")
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/auth/admin/users `)
       .then(res => setUsers(res.data))
       .catch(err => console.error(err));
   }, [reload]);
 
   const handleDelete = async (email) => {
     if (!window.confirm(`Delete user ${email}?`)) return;
-    await axios.delete(`http://localhost:5000/api/auth/admin/users/${email}`);
+    await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/auth/admin/users/${email}`);
     setReload(!reload);
   };
 
   const toggleRole = async (email, currentRole) => {
     const newRole = currentRole === "admin" ? "user" : "admin";
-    await axios.put("http://localhost:5000/api/auth/admin/users/role", {
+    await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/auth/admin/users/role`, {
       email,
       newRole
     });
