@@ -5,6 +5,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   deviceHistory: [String],
   ipHistory: [String],
+  otp: { type: String },
+  otpExpiry: { type: Date },
   suspiciousFlag: { type: Boolean, default: false }
 });
 
