@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
   suspiciousFlag: { type: Boolean, default: false },
   otp: { type: String },
   otpExpiry: { type: Date }
-  loginLogs: [{
+  loginLogs: [
+   {
     timestamp: Date,
     ip: String,
     deviceId: String,
@@ -17,7 +18,8 @@ const userSchema = new mongoose.Schema({
     country: String,
     riskScore: Number,
     flagged: Boolean
-  }]
+  }
+]
 });
 
 export default mongoose.model("User", userSchema);
