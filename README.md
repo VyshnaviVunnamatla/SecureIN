@@ -115,6 +115,9 @@ OTP_APP_PASSWORD=your_app_specific_password
 
 ## 📸 Screenshots
 
+<img width="937" height="437" alt="image" src="https://github.com/user-attachments/assets/0dac11aa-9b9e-4242-b79b-93e0c2ad0f60" />
+
+
 ---
 
 ## 📝 License
