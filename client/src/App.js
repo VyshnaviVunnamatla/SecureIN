@@ -3,8 +3,11 @@ import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 const App = () => {
+  const [step, setStep] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [token, setToken] = useState("");
 
   const getDeviceId = async () => {
     const fp = await FingerprintJS.load();
@@ -31,21 +34,56 @@ const App = () => {
       });
 
       if (res.data.suspicious) {
-        alert("⚠️ Suspicious login detected. Please verify your email or device.");
+        setStep("otp");
+        alert("⚠️ Suspicious login detected. OTP sent to your email.");
       } else {
-        alert("✅ Login successful");
+        setToken(res.data.token);
+        setStep("loggedIn");
       }
     } catch (err) {
       alert(err.response?.data?.error || "Login failed");
     }
   };
 
+  const handleVerifyOtp = async () => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/verify-otp", {
+        email,
+        otp,
+      });
+      setToken(res.data.token);
+      setStep("loggedIn");
+    } catch (err) {
+      alert(err.response?.data?.error || "OTP failed");
+    }
+  };
+
   return (
-    <div style={{ padding: "30px" }}>
-      <h2>Zero Trust Auth Login</h2>
-      <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" /><br />
-      <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" /><br />
-      <button onClick={handleLogin}>Login</button>
+    <div style={{ padding: "40px", fontFamily: "Arial" }}>
+      <h2>Zero Trust Authentication</h2>
+
+      {step === "login" && (
+        <>
+          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" /><br /><br />
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" /><br /><br />
+          <button onClick={handleLogin}>Login</button>
+        </>
+      )}
+
+      {step === "otp" && (
+        <>
+          <h3>Enter OTP sent to your email</h3>
+          <input value={otp} onChange={e => setOtp(e.target.value)} placeholder="Enter OTP" /><br /><br />
+          <button onClick={handleVerifyOtp}>Verify</button>
+        </>
+      )}
+
+      {step === "loggedIn" && (
+        <>
+          <h3>✅ Login Successful</h3>
+          <p>JWT: <code>{token}</code></p>
+        </>
+      )}
     </div>
   );
 };
