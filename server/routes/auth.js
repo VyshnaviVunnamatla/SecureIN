@@ -1,50 +1,52 @@
-const router = require("express").Router();
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const axios = require("axios");
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+
+const router = express.Router();
 
 router.post("/register", async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const { email, password } = req.body;
     const hash = await bcrypt.hash(password, 10);
     const user = new User({ email, password: hash });
     await user.save();
-    res.json({ message: "User registered" });
+    res.status(201).json({ message: "User Registered" });
   } catch (err) {
     res.status(400).json({ error: "User exists or error" });
   }
 });
 
 router.post("/login", async (req, res) => {
+  const { email, password, deviceId, ip } = req.body;
   try {
-    const { email, password, deviceId, ip } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: "User not found" });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return res.status(401).json({ error: "Invalid credentials" });
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) return res.status(401).json({ error: "Invalid password" });
 
-    // Zero Trust Checks
-    const isNewDevice = !user.deviceHistory.includes(deviceId);
-    const isNewIP = !user.ipHistory.includes(ip);
+    let suspicious = false;
 
-    if (isNewDevice || isNewIP) {
-      user.suspiciousFlag = true;
+    if (!user.deviceHistory.includes(deviceId)) {
+      user.deviceHistory.push(deviceId);
+      suspicious = true;
     }
 
-    // Save device/IP history
-    if (isNewDevice) user.deviceHistory.push(deviceId);
-    if (isNewIP) user.ipHistory.push(ip);
+    if (!user.ipHistory.includes(ip)) {
+      user.ipHistory.push(ip);
+      suspicious = true;
+    }
 
+    user.suspiciousFlag = suspicious;
     await user.save();
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.json({ token, suspicious: user.suspiciousFlag });
+    res.json({ token, suspicious });
   } catch (err) {
-    res.status(500).json({ error: "Login failed" });
+    res.status(500).json({ error: "Server Error" });
   }
 });
 
-module.exports = router;
+export default router;
