@@ -32,7 +32,7 @@ const App = () => {
     const ip = await getIp();
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
         email,
         password,
         deviceId,
@@ -54,7 +54,7 @@ const App = () => {
 
   const handleVerifyOtp = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/verify-otp", {
+      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/verify-otp`, {
         email,
         otp,
       });
