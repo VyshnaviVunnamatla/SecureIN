@@ -116,6 +116,10 @@ const App = () => {
         </>
       )}
 
+      {step === "admin" && (
+        <AdminDashboard onBack={() => setStep("loggedIn")} />
+      )}
+
       {step === "loggedIn" && (
         <>
           <h3>Login Successful</h3>
