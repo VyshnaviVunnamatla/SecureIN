@@ -4,6 +4,7 @@ import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import AdminDashboard from "./AdminDashboard";
 import AdminRegister from "./AdminRegister";
 import AdminUserPanel from "./AdminUserPanel";
+import './App.css';
 
 const App = () => {
   const [step, setStep] = useState("login");
@@ -84,65 +85,67 @@ const App = () => {
   };
 
   return (
-    <div style={{ padding: "40px", fontFamily: "Arial" }}>
-      <h2>Zero Trust Authentication</h2>
+    <div className="app-container">
+      <div className="app-box">
+        <h2>Zero Trust Authentication</h2>
 
-      {step === "login" && (
-        <>
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-          /><br /><br />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-          /><br /><br />
-          <button onClick={handleLogin}>Login</button>
-        </>
-      )}
+        {step === "login" && (
+          <>
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+            /><br /><br />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+            /><br /><br />
+            <button onClick={handleLogin}>Login</button>
+          </>
+        )}
 
-      {step === "otp" && (
-        <>
-          <h3>Enter OTP sent to your email</h3>
-          <input
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            placeholder="Enter OTP"
-          /><br /><br />
-          <button onClick={handleVerifyOtp}>Verify</button>
-        </>
-      )}
+        {step === "otp" && (
+          <>
+            <h3>Enter OTP sent to your email</h3>
+            <input
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              placeholder="Enter OTP"
+            /><br /><br />
+            <button onClick={handleVerifyOtp}>Verify</button>
+          </>
+        )}
 
-      {step === "admin" && (
-        <AdminDashboard onBack={() => setStep("loggedIn")} />
-      )}
+        {step === "admin" && (
+          <AdminDashboard onBack={() => setStep("loggedIn")} />
+        )}
 
-      {step === "loggedIn" && (
-        <>
-          <h3>Login Successful</h3>
-          <p>JWT: <code>{token}</code></p>
-          <p>Role: <strong>{role}</strong></p>
-          {role === "admin" && (
-            <>
-              <button onClick={() => setStep("admin")}>Go to Admin Dashboard</button><br /><br />
-              <button onClick={() => setAdminPanel(true)}>Create Users (Admin Only)</button><br /><br />
-              <button onClick={() => setUserPanel(true)}>Manage Users</button><br /><br />
-            </>
-          )}
-          <br /><br />
-          <button onClick={() => {
-            setToken(""); setRole(""); setStep("login");
-          }}>
-            Logout
-          </button>
-        </>
-      )}
+        {step === "loggedIn" && (
+          <>
+            <h3>Login Successful</h3>
+            <p>JWT: <code>{token}</code></p>
+            <p>Role: <strong>{role}</strong></p>
+            {role === "admin" && (
+              <>
+                <button onClick={() => setStep("admin")}>Go to Admin Dashboard</button><br /><br />
+                <button onClick={() => setAdminPanel(true)}>Create Users (Admin Only)</button><br /><br />
+                <button onClick={() => setUserPanel(true)}>Manage Users</button><br /><br />
+              </>
+            )}
+            <br /><br />
+            <button onClick={() => {
+              setToken(""); setRole(""); setStep("login");
+            }}>
+              Logout
+            </button>
+          </>
+        )}
 
-      {adminPanel && <AdminRegister />}
-      {userPanel && <AdminUserPanel />}
+        {adminPanel && <AdminRegister />}
+        {userPanel && <AdminUserPanel />}
+      </div>
     </div>
   );
 };
