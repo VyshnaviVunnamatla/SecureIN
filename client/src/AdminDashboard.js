@@ -16,7 +16,7 @@ const AdminDashboard = () => {
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/auth/admin/logs")
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/auth/admin/logs`)
       .then(res => setLogs(res.data))
       .catch(err => console.log(err));
   }, []);
