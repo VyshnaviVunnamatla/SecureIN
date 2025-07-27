@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import AdminDashboard from "./AdminDashboard";
+import AdminRegister from "./AdminRegister";
 
 const App = () => {
   const [step, setStep] = useState("login");
@@ -10,6 +11,7 @@ const App = () => {
   const [otp, setOtp] = useState("");
   const [token, setToken] = useState("");
   const [role, setRole] = useState("");
+  const [adminPanel, setAdminPanel] = useState(false);
 
   const getDeviceId = async () => {
     const fp = await FingerprintJS.load();
@@ -97,11 +99,14 @@ const App = () => {
 
       {step === "loggedIn" && (
         <>
-          <h3>✅ Login Successful</h3>
+          <h3>Login Successful</h3>
           <p>JWT: <code>{token}</code></p>
           <p>Role: <strong>{role}</strong></p>
           {role === "admin" && (
-            <button onClick={() => setStep("admin")}>Go to Admin Dashboard</button>
+            <>
+              <button onClick={() => setStep("admin")}>Go to Admin Dashboard</button><br /><br />
+              <button onClick={() => setAdminPanel(true)}>Create Users (Admin Only)</button><br /><br />
+            </>
           )}
           <br /><br />
           <button onClick={() => {
@@ -111,6 +116,7 @@ const App = () => {
           </button>
         </>
       )}
+      {adminPanel && <AdminRegister />}
   );
 };
 
