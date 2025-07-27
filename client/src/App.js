@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import AdminDashboard from "./AdminDashboard";
 
 const App = () => {
   const [step, setStep] = useState("login");
@@ -35,7 +36,7 @@ const App = () => {
 
       if (res.data.suspicious) {
         setStep("otp");
-        alert("⚠️ Suspicious login detected. OTP sent to your email.");
+        alert("⚠ Suspicious login detected. OTP sent to your email.");
       } else {
         setToken(res.data.token);
         setStep("loggedIn");
@@ -64,8 +65,17 @@ const App = () => {
 
       {step === "login" && (
         <>
-          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" /><br /><br />
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" /><br /><br />
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+          /><br /><br />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+          /><br /><br />
           <button onClick={handleLogin}>Login</button>
         </>
       )}
@@ -73,17 +83,24 @@ const App = () => {
       {step === "otp" && (
         <>
           <h3>Enter OTP sent to your email</h3>
-          <input value={otp} onChange={e => setOtp(e.target.value)} placeholder="Enter OTP" /><br /><br />
+          <input
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            placeholder="Enter OTP"
+          /><br /><br />
           <button onClick={handleVerifyOtp}>Verify</button>
         </>
       )}
 
       {step === "loggedIn" && (
         <>
-          <h3>✅ Login Successful</h3>
+          <h3>Login Successful</h3>
           <p>JWT: <code>{token}</code></p>
+          <button onClick={() => setStep("admin")}>Go to Admin Dashboard</button>
         </>
       )}
+
+      {step === "admin" && <AdminDashboard />}
     </div>
   );
 };
