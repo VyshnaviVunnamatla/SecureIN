@@ -9,6 +9,7 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [token, setToken] = useState("");
+  const [role, setRole] = useState("");
 
   const getDeviceId = async () => {
     const fp = await FingerprintJS.load();
@@ -39,6 +40,7 @@ const App = () => {
         alert("⚠ Suspicious login detected. OTP sent to your email.");
       } else {
         setToken(res.data.token);
+        setRole(res.data.role);
         setStep("loggedIn");
       }
     } catch (err) {
@@ -53,6 +55,7 @@ const App = () => {
         otp,
       });
       setToken(res.data.token);
+      setRole(res.data.role);
       setStep("loggedIn");
     } catch (err) {
       alert(err.response?.data?.error || "OTP failed");
