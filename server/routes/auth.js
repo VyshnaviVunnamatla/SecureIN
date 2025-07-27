@@ -109,4 +109,40 @@ router.get("/admin/logs", async (req, res) => {
   res.json(users);
 });
 
+// Get all users (admin-only route)
+router.get("/admin/users", async (req, res) => {
+  try {
+    const users = await User.find({}, "email role").lean();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching users" });
+  }
+});
+
+// Delete a user by email
+router.delete("/admin/users/:email", async (req, res) => {
+  try {
+    await User.findOneAndDelete({ email: req.params.email });
+    res.json({ message: "User deleted" });
+  } catch (err) {
+    res.status(500).json({ error: "Deletion failed" });
+  }
+});
+
+// Change role (user ↔ admin)
+router.put("/admin/users/role", async (req, res) => {
+  const { email, newRole } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    user.role = newRole;
+    await user.save();
+    res.json({ message: "Role updated" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update role" });
+  }
+});
+
+
 export default router;
