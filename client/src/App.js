@@ -97,14 +97,20 @@ const App = () => {
 
       {step === "loggedIn" && (
         <>
-          <h3>Login Successful</h3>
+          <h3>✅ Login Successful</h3>
           <p>JWT: <code>{token}</code></p>
-          <button onClick={() => setStep("admin")}>Go to Admin Dashboard</button>
+          <p>Role: <strong>{role}</strong></p>
+          {role === "admin" && (
+            <button onClick={() => setStep("admin")}>Go to Admin Dashboard</button>
+          )}
+          <br /><br />
+          <button onClick={() => {
+            setToken(""); setRole(""); setStep("login");
+          }}>
+            Logout
+          </button>
         </>
       )}
-
-      {step === "admin" && <AdminDashboard />}
-    </div>
   );
 };
 
