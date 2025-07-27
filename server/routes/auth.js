@@ -31,7 +31,15 @@ router.post("/login", async (req, res) => {
     // Risk scoring logic
     let risk = 0;
     let suspicious = false;
-    const geo = await fetch(`https://ipapi.co/${ip}/json`).then(res => res.json());
+    //const geo = await fetch(`https://ipapi.co/${ip}/json`).then(res => res.json());
+    let geo = {};
+    try {
+      const geoRes = await fetch(`https://ipapi.co/${ip}/json`);
+      geo = await geoRes.json();
+    } catch (e) {
+      console.error("GeoIP lookup failed", e);
+      geo = { city: "Unknown", country_name: "Unknown" };
+    }
 
     if (!user.deviceHistory.includes(deviceId)) {
       user.deviceHistory.push(deviceId);
@@ -56,8 +64,8 @@ router.post("/login", async (req, res) => {
       timestamp: new Date(),
       ip,
       deviceId,
-      city: geo.city,
-      country: geo.country_name,
+      city: geo.city || "Unknown",
+      country: geo.country_name || "Unknown",
       riskScore: risk,
       flagged: risk >= 5,
     });
