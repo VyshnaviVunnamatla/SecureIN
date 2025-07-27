@@ -59,8 +59,8 @@ const App = () => {
         setStep("loggedIn");
       }
     } catch (err) {
-      console.error("Login failed:", err);
-      alert(err.response?.data?.error || "Login failed. Check console for more.");
+      console.error("Login failed:", err.message, err.response?.status, err.response?.data);
+      alert(err.response?.data?.error || err.message || "Login failed. Check console for details.");
     }
   };
 
