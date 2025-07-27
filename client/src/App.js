@@ -28,8 +28,17 @@ const App = () => {
   };
 
   const handleLogin = async () => {
+    console.log("Login initiated...");
+
     const deviceId = await getDeviceId();
     const ip = await getIp();
+    console.log("Device ID:", deviceId);
+    console.log("IP Address:", ip);
+
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
 
     try {
       const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
@@ -39,29 +48,37 @@ const App = () => {
         ip,
       });
 
+      console.log("Response:", res.data);
+
       if (res.data.suspicious) {
         setStep("otp");
-        alert("⚠ Suspicious login detected. OTP sent to your email.");
+        alert("Suspicious login detected. OTP sent to your email.");
       } else {
         setToken(res.data.token);
         setRole(res.data.role);
         setStep("loggedIn");
       }
     } catch (err) {
-      alert(err.response?.data?.error || "Login failed");
+      console.error("Login failed:", err);
+      alert(err.response?.data?.error || "Login failed. Check console for more.");
     }
   };
 
   const handleVerifyOtp = async () => {
+    console.log("Verifying OTP...");
+
     try {
       const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/verify-otp`, {
         email,
         otp,
       });
+      console.log("OTP Verified:", res.data);
+
       setToken(res.data.token);
       setRole(res.data.role);
       setStep("loggedIn");
     } catch (err) {
+      console.error("OTP Verification failed:", err);
       alert(err.response?.data?.error || "OTP failed");
     }
   };
@@ -122,7 +139,7 @@ const App = () => {
 
       {adminPanel && <AdminRegister />}
       {userPanel && <AdminUserPanel />}
-    </div> // ✅ <== THIS LINE was missing earlier
+    </div>
   );
 };
 
