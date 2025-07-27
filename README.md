@@ -129,6 +129,7 @@ Pull requests and feature suggestions are welcome. If you encounter a bug or wan
 
 ## 📬 Contact
 
-Made with ❤️ by Vyshnavi
+-Vyshnavi
+
 📧 vyshnavivunnamatla21@gmail.com
 
