@@ -8,10 +8,10 @@ import fetch from "node-fetch";
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, role = "user" } = req.body;
   try {
     const hash = await bcrypt.hash(password, 10);
-    const user = new User({ email, password: hash });
+    const user = new User({ email, password: hash, role });
     await user.save();
     res.status(201).json({ message: "User Registered" });
   } catch (err) {
