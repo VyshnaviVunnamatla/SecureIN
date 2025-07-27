@@ -5,9 +5,9 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   deviceHistory: [String],
   ipHistory: [String],
+  suspiciousFlag: { type: Boolean, default: false },
   otp: { type: String },
-  otpExpiry: { type: Date },
-  suspiciousFlag: { type: Boolean, default: false }
+  otpExpiry: { type: Date }
 });
 
 export default mongoose.model("User", userSchema);
