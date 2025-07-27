@@ -77,7 +77,7 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
     await user.save();
 
-    res.json({ token, suspicious: false });
+    res.json({ token, suspicious: false, role: user.role });
   } catch (err) {
     res.status(500).json({ error: "Login failed" });
   }
@@ -98,7 +98,7 @@ router.post("/verify-otp", async (req, res) => {
     await user.save();
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.json({ token });
+    res.json({ token, role: user.role });
   } catch (err) {
     res.status(500).json({ error: "OTP verification failed" });
   }
