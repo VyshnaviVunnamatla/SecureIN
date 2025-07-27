@@ -1,5 +1,15 @@
 import mongoose from "mongoose";
 
+const loginLogSchema = new mongoose.Schema({
+  timestamp: { type: Date },
+  ip: { type: String },
+  deviceId: { type: String },
+  city: { type: String },
+  country: { type: String },
+  riskScore: { type: Number },
+  flagged: { type: Boolean },
+}, { _id: false });
+
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -8,18 +18,9 @@ const userSchema = new mongoose.Schema({
   ipHistory: [String],
   suspiciousFlag: { type: Boolean, default: false },
   otp: { type: String },
-  otpExpiry: { type: Date }
-  loginLogs: [
-   {
-    timestamp: Date,
-    ip: String,
-    deviceId: String,
-    city: String,
-    country: String,
-    riskScore: Number,
-    flagged: Boolean
-  }
-]
+  otpExpiry: { type: Date },
+  loginLogs: [loginLogSchema]
 });
 
-export default mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+export default User;
