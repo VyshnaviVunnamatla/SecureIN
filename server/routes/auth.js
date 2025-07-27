@@ -26,7 +26,7 @@ router.post("/login", async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) return res.status(401).json({ error: "Invalid credentials" });
+    if (!isValid) return res.status(401).json({ error: "Incorrect password" });
 
     // Risk scoring logic
     let risk = 0;
