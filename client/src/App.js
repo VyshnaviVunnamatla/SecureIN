@@ -119,8 +119,10 @@ const App = () => {
           </button>
         </>
       )}
+
       {adminPanel && <AdminRegister />}
       {userPanel && <AdminUserPanel />}
+    </div> // ✅ <== THIS LINE was missing earlier
   );
 };
 
