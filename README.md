@@ -1,4 +1,4 @@
-# 🔐 Zero Trust Authentication & Access Management System
+# 🔐 SecureIN
 
 A full-stack secure authentication platform based on **Zero Trust principles** — enhancing login security through real-time risk analysis, device/IP fingerprinting, OTP-based suspicious login validation, and admin-level user management.
 
