@@ -1,20 +1,22 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  twoFactorSecret: { type: String },
-  verified: { type: Boolean, default: false },
-  role: { type: String, enum: ['user', 'admin'], default: 'user' },
-  loginHistory: [
-    {
-      ip: String,
-      location: String,
-      device: String,
-      date: { type: Date, default: Date.now }
-    }
-  ]
-}, { timestamps: true });
+const DeviceSchema = new mongoose.Schema({
+  deviceId: String,     // hashed fingerprint
+  name: String,         // user agent short
+  lastSeen: Date,
+  ip: String,
+  geo: Object
+});
 
-export default mongoose.model('User', userSchema);
+const UserSchema = new mongoose.Schema({
+  name: String,
+  email: { type: String, unique: true, index: true },
+  passwordHash: String,
+  role: { type: String, default: 'User', enum: ['User','Moderator','Admin'] },
+  emailVerified: { type: Boolean, default: false },
+  devices: [DeviceSchema],
+  mfaEnabled: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model('User', UserSchema);
