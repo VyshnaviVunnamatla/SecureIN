@@ -1,5 +1,5 @@
 {
-  "name": "nextgen-auth-backend",
+  "name": "secure-in",
   "version": "1.0.0",
   "main": "server.js",
   "type": "module",
@@ -17,5 +17,8 @@
     "speakeasy": "^2.0.0",
     "qrcode": "^1.5.1",
     "geoip-lite": "^1.4.6"
+  }
+  "devDependencies": { 
+    "nodemon": "^2.0.22"
   }
 }
