@@ -1,18 +1,23 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import connectDB from './config/db.js';
-import authRoutes from './routes/authRoutes.js';
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const connectDB = require('./config/db');
 
-dotenv.config();
+const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
+
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-app.use(cors());
+app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
 app.use(express.json());
-
-connectDB();
+app.set('trust proxy', true); // for req.ip behind proxies
 
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 5000;
+
+connectDB(process.env.MONGO_URI).then(() => {
+  app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+}).catch(err => {
+  console.error('DB connection failed', err);
+});
