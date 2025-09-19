@@ -16,7 +16,8 @@
     "mongoose": "^7.6.3",
     "uuid": "^9.0.1",
     "ua-parser-js": "^1.0.37",
-    "geoip-lite": "^1.4.2"
+    "geoip-lite": "^1.4.2",
+    "nodemailer": "^6.9.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
