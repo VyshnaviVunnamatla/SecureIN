@@ -15,7 +15,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.3",
     "uuid": "^9.0.1",
-    "ua-parser-js": "^1.0.37"
+    "ua-parser-js": "^1.0.37",
+    "geoip-lite": "^1.4.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
