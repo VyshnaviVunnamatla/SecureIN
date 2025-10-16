@@ -54,15 +54,35 @@ A full-stack secure authentication platform based on **Zero Trust principles** �
 
 zero-trust-auth-system/
 ├── client/ # React frontend
+
+
 │ ├── App.js
+
+
 │ ├── AdminDashboard.js
+
+
 │ └── ...
+
+
 ├── server/ # Express backend
+
+
 │ ├── index.js
+
+
 │ ├── routes/
+
+
 │ ├── models/
+
+
 │ ├── utils/
+
+
 │ └── .env.example
+
+
 └── README.md
 
 ---
