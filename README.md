@@ -4,7 +4,7 @@ A full-stack secure authentication platform based on **Zero Trust principles** â
 
 ## ðŸš€ Live Demo
 
-- **Frontend** (React + Vercel): [https://zero-trust-auth-system.vercel.app](https://zero-trust-auth-system.vercel.app)
+- **Frontend** (React + Vercel): [https://securein.base44.app/](https://securein.base44.app/)
 - **Backend** (Node.js + Express + Render): Hosted on Render with API endpoints
 
 ---
