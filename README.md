@@ -53,6 +53,8 @@ A full-stack secure authentication platform based on **Zero Trust principles** �
 ## 📁 Folder Structure
 
 zero-trust-auth-system/
+
+
 ├── client/ # React frontend
 
 
